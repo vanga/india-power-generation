@@ -8,7 +8,7 @@ import zipfile
 
 
 output_dir = Path("./data/raw/")
-zip_dir = Path("./data/zips/")
+zip_dir = Path("./data/raw/")
 track_json_path = Path("./data/track.json")
 timezone = pytz.timezone("Asia/Kolkata")
 start_date = datetime(2017, 9, 1).replace(tzinfo=timezone)
