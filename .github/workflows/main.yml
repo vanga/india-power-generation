@@ -13,6 +13,9 @@ jobs:
     steps:
     - name: Check out this repo
       uses: actions/checkout@v3
+    - name: install dependencies
+      run: pip install -r requirements.txt
+
     - name: Fetch latest data
       run: python3 download_reports.py
     - name: Commit and push if it changed
@@ -23,3 +26,4 @@ jobs:
         timestamp=$(date -u)
         git commit -m "Latest reports: ${timestamp}" || exit 0
         git push
+
