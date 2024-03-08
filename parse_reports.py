@@ -1,6 +1,9 @@
 """
 Only handles xls reports.
 PDF files are parsed to csv, but the work to parse them and conveert to structred data is not done yet
+TODO:
+* Away to not process all the reports for a fresh clone.
+* Process PDF reports
 """
 
 import zipfile
@@ -122,7 +125,6 @@ def convert_pdf_to_csv(report_path: Path, output_path: Path):
     tables = tabula.read_pdf(
         str(report_path), pages="all", pandas_options={"header": None}
     )
-    print(f"Number of tables found in {report_path.name}: {len(tables)}")
     df = pd.DataFrame()
     for i, table in enumerate(tables):
         df = pd.concat([df, table], ignore_index=True)
@@ -144,7 +146,6 @@ def convert_report_to_csv(report_path: Path):
     output_path = format_dir / report_path.with_suffix(".csv").name
     if output_path.exists():
         return
-    print("Converting", report_path, "to", output_path)
     if src_report_format == "pdf":
         convert_pdf_to_csv(report_path, output_path)
     elif src_report_format == "xls":
@@ -198,6 +199,7 @@ def add_additional_columns(df):
     Fill up the plant metadata from earlier rows
     Add date and format columns
     """
+    print(f"Processing {df.shape[0]} rows")
     o_power_st_col = 2
     o_sector_col = 5
     o_station_type_col = 4
