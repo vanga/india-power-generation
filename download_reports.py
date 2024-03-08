@@ -79,7 +79,7 @@ def ist_parse(date_str):
 
 def get_dates_to_download():
     latest_downloaded_date = track_json.get("latest_downloaded_date", None)
-    end_date = ist_now() - timedelta(days=1)
+    end_date = ist_now() - timedelta(days=2)
     if latest_downloaded_date is None:
         start_with = start_date
     else:

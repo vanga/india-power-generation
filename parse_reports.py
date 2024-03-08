@@ -315,7 +315,7 @@ def get_merged_df(format) -> pd.DataFrame:
     return merged_df, failed_dates
 
 
-def write_to_csv(all_df, output_dir):
+def write_to_csv(all_df: pd.DataFrame, output_dir: Path):
     region_df = all_df[all_df[row_type_col] == "Region"]
     state_df = all_df[all_df[row_type_col] == "State"]
     sector_df = all_df[all_df[row_type_col] == "Sector"]
@@ -323,12 +323,48 @@ def write_to_csv(all_df, output_dir):
     station_df = all_df[all_df[row_type_col] == "Station"]
     unit_df = all_df[all_df[row_type_col] == "Unit"]
 
-    region_df.to_csv(output_dir / "region.csv", index=False)
-    state_df.to_csv(output_dir / "state.csv", index=False)
-    sector_df.to_csv(output_dir / "sector.csv", index=False)
-    station_type_df.to_csv(output_dir / "station_type.csv", index=False)
-    station_df.to_csv(output_dir / "station.csv", index=False)
-    unit_df.to_csv(output_dir / "unit.csv", index=False)
+    region_df.drop(
+        columns=[
+            "Row Type",
+            "State",
+            "Sector",
+            "Station Type",
+            "Station",
+            "Unit",
+            "Source Format",
+            "Outage Type",
+        ]
+    ).to_csv(output_dir / "region.csv", index=False)
+    state_df.drop(
+        columns=[
+            "Row Type",
+            "Sector",
+            "Station Type",
+            "Station",
+            "Unit",
+            "Source Format",
+            "Outage Type",
+        ]
+    ).to_csv(output_dir / "state.csv", index=False)
+    sector_df.drop(
+        columns=[
+            "Row Type",
+            "Station Type",
+            "Station",
+            "Unit",
+            "Source Format",
+            "Outage Type",
+        ]
+    ).to_csv(output_dir / "sector.csv", index=False)
+    station_type_df.drop(
+        columns=["Row Type", "Station", "Unit", "Source Format", "Outage Type"]
+    ).to_csv(output_dir / "station_type.csv", index=False)
+    station_df.drop(
+        columns=["Row Type", "Unit", "Source Format", "Outage Type"]
+    ).to_csv(output_dir / "station.csv", index=False)
+    unit_df.drop(columns=["Row Type", "Source Format"]).to_csv(
+        output_dir / "unit.csv", index=False
+    )
     all_df.to_csv(output_dir / "all.csv", index=False)
 
 
