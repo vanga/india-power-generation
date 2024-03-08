@@ -365,7 +365,6 @@ def write_to_csv(all_df: pd.DataFrame, output_dir: Path):
     unit_df.drop(columns=["Row Type", "Source Format"]).to_csv(
         output_dir / "unit.csv", index=False
     )
-    all_df.to_csv(output_dir / "all.csv", index=False)
 
 
 output_dir.mkdir(parents=True, exist_ok=True)
