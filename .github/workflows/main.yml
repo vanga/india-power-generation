@@ -1,4 +1,4 @@
-name: Download reports
+name: Download NPP Daily reports
 
 on:
   workflow_dispatch: {}  

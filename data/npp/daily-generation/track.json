@@ -1,0 +1,313 @@
+{
+    "failed": {
+        "2017-10-02": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/02-10-2017/dgr2-2017-10-02.pdf",
+            "response_code": 404
+        },
+        "2020-03-19": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/19-03-2020/dgr2-2020-03-19.xls",
+            "response_code": 404
+        },
+        "2020-03-20": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/20-03-2020/dgr2-2020-03-20.xls",
+            "response_code": 404
+        },
+        "2020-03-21": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/21-03-2020/dgr2-2020-03-21.xls",
+            "response_code": 404
+        },
+        "2020-03-22": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/22-03-2020/dgr2-2020-03-22.xls",
+            "response_code": 404
+        },
+        "2020-03-23": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/23-03-2020/dgr2-2020-03-23.xls",
+            "response_code": 404
+        },
+        "2020-03-24": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/24-03-2020/dgr2-2020-03-24.xls",
+            "response_code": 404
+        },
+        "2020-03-25": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/25-03-2020/dgr2-2020-03-25.xls",
+            "response_code": 404
+        },
+        "2020-03-26": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/26-03-2020/dgr2-2020-03-26.xls",
+            "response_code": 404
+        },
+        "2020-03-27": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/27-03-2020/dgr2-2020-03-27.xls",
+            "response_code": 404
+        },
+        "2020-03-28": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/28-03-2020/dgr2-2020-03-28.xls",
+            "response_code": 404
+        },
+        "2020-03-29": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/29-03-2020/dgr2-2020-03-29.xls",
+            "response_code": 404
+        },
+        "2020-03-30": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/30-03-2020/dgr2-2020-03-30.xls",
+            "response_code": 404
+        },
+        "2020-03-31": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/31-03-2020/dgr2-2020-03-31.xls",
+            "response_code": 404
+        },
+        "2020-04-01": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/01-04-2020/dgr2-2020-04-01.xls",
+            "response_code": 404
+        },
+        "2020-04-02": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/02-04-2020/dgr2-2020-04-02.xls",
+            "response_code": 404
+        },
+        "2020-04-03": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/03-04-2020/dgr2-2020-04-03.xls",
+            "response_code": 404
+        },
+        "2020-04-04": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/04-04-2020/dgr2-2020-04-04.xls",
+            "response_code": 404
+        },
+        "2020-04-05": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/05-04-2020/dgr2-2020-04-05.xls",
+            "response_code": 404
+        },
+        "2020-04-06": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/06-04-2020/dgr2-2020-04-06.xls",
+            "response_code": 404
+        },
+        "2020-04-07": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/07-04-2020/dgr2-2020-04-07.xls",
+            "response_code": 404
+        },
+        "2020-04-08": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/08-04-2020/dgr2-2020-04-08.xls",
+            "response_code": 404
+        },
+        "2020-04-09": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/09-04-2020/dgr2-2020-04-09.xls",
+            "response_code": 404
+        },
+        "2020-04-10": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/10-04-2020/dgr2-2020-04-10.xls",
+            "response_code": 404
+        },
+        "2020-04-11": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/11-04-2020/dgr2-2020-04-11.xls",
+            "response_code": 404
+        },
+        "2020-04-12": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/12-04-2020/dgr2-2020-04-12.xls",
+            "response_code": 404
+        },
+        "2020-04-13": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/13-04-2020/dgr2-2020-04-13.xls",
+            "response_code": 404
+        },
+        "2020-04-14": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/14-04-2020/dgr2-2020-04-14.xls",
+            "response_code": 404
+        },
+        "2020-04-15": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/15-04-2020/dgr2-2020-04-15.xls",
+            "response_code": 404
+        },
+        "2020-04-16": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/16-04-2020/dgr2-2020-04-16.xls",
+            "response_code": 404
+        },
+        "2020-04-17": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/17-04-2020/dgr2-2020-04-17.xls",
+            "response_code": 404
+        },
+        "2020-04-18": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/18-04-2020/dgr2-2020-04-18.xls",
+            "response_code": 404
+        },
+        "2020-04-19": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/19-04-2020/dgr2-2020-04-19.xls",
+            "response_code": 404
+        },
+        "2020-04-20": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/20-04-2020/dgr2-2020-04-20.xls",
+            "response_code": 404
+        },
+        "2020-04-21": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/21-04-2020/dgr2-2020-04-21.xls",
+            "response_code": 404
+        },
+        "2020-04-22": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/22-04-2020/dgr2-2020-04-22.xls",
+            "response_code": 404
+        },
+        "2020-04-23": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/23-04-2020/dgr2-2020-04-23.xls",
+            "response_code": 404
+        },
+        "2020-04-24": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/24-04-2020/dgr2-2020-04-24.xls",
+            "response_code": 404
+        },
+        "2020-04-25": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/25-04-2020/dgr2-2020-04-25.xls",
+            "response_code": 404
+        },
+        "2020-04-26": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/26-04-2020/dgr2-2020-04-26.xls",
+            "response_code": 404
+        },
+        "2020-04-27": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/27-04-2020/dgr2-2020-04-27.xls",
+            "response_code": 404
+        },
+        "2020-04-28": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/28-04-2020/dgr2-2020-04-28.xls",
+            "response_code": 404
+        },
+        "2020-04-29": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/29-04-2020/dgr2-2020-04-29.xls",
+            "response_code": 404
+        },
+        "2020-04-30": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/30-04-2020/dgr2-2020-04-30.xls",
+            "response_code": 404
+        },
+        "2020-05-01": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/01-05-2020/dgr2-2020-05-01.xls",
+            "response_code": 404
+        },
+        "2020-05-02": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/02-05-2020/dgr2-2020-05-02.xls",
+            "response_code": 404
+        },
+        "2020-05-03": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/03-05-2020/dgr2-2020-05-03.xls",
+            "response_code": 404
+        },
+        "2020-05-04": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/04-05-2020/dgr2-2020-05-04.xls",
+            "response_code": 404
+        },
+        "2020-05-05": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/05-05-2020/dgr2-2020-05-05.xls",
+            "response_code": 404
+        },
+        "2020-05-06": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/06-05-2020/dgr2-2020-05-06.xls",
+            "response_code": 404
+        },
+        "2020-05-07": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/07-05-2020/dgr2-2020-05-07.xls",
+            "response_code": 404
+        },
+        "2020-05-08": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/08-05-2020/dgr2-2020-05-08.xls",
+            "response_code": 404
+        },
+        "2020-05-09": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/09-05-2020/dgr2-2020-05-09.xls",
+            "response_code": 404
+        },
+        "2020-05-10": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/10-05-2020/dgr2-2020-05-10.xls",
+            "response_code": 404
+        },
+        "2020-05-11": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/11-05-2020/dgr2-2020-05-11.xls",
+            "response_code": 404
+        },
+        "2020-05-12": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/12-05-2020/dgr2-2020-05-12.xls",
+            "response_code": 404
+        },
+        "2020-05-13": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/13-05-2020/dgr2-2020-05-13.xls",
+            "response_code": 404
+        },
+        "2020-05-14": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/14-05-2020/dgr2-2020-05-14.xls",
+            "response_code": 404
+        },
+        "2020-05-15": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/15-05-2020/dgr2-2020-05-15.xls",
+            "response_code": 404
+        },
+        "2020-05-16": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/16-05-2020/dgr2-2020-05-16.xls",
+            "response_code": 404
+        },
+        "2020-05-17": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/17-05-2020/dgr2-2020-05-17.xls",
+            "response_code": 404
+        },
+        "2020-05-18": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/18-05-2020/dgr2-2020-05-18.xls",
+            "response_code": 404
+        },
+        "2020-05-19": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/19-05-2020/dgr2-2020-05-19.xls",
+            "response_code": 404
+        },
+        "2020-05-20": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/20-05-2020/dgr2-2020-05-20.xls",
+            "response_code": 404
+        },
+        "2020-05-21": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/21-05-2020/dgr2-2020-05-21.xls",
+            "response_code": 404
+        },
+        "2020-05-22": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/22-05-2020/dgr2-2020-05-22.xls",
+            "response_code": 404
+        },
+        "2020-05-23": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/23-05-2020/dgr2-2020-05-23.xls",
+            "response_code": 404
+        },
+        "2020-05-24": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/24-05-2020/dgr2-2020-05-24.xls",
+            "response_code": 404
+        },
+        "2020-05-25": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/25-05-2020/dgr2-2020-05-25.xls",
+            "response_code": 404
+        },
+        "2020-05-26": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/26-05-2020/dgr2-2020-05-26.xls",
+            "response_code": 404
+        },
+        "2020-05-27": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/27-05-2020/dgr2-2020-05-27.xls",
+            "response_code": 404
+        },
+        "2020-05-28": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/28-05-2020/dgr2-2020-05-28.xls",
+            "response_code": 404
+        },
+        "2020-05-29": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/29-05-2020/dgr2-2020-05-29.xls",
+            "response_code": 404
+        },
+        "2020-05-30": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/30-05-2020/dgr2-2020-05-30.xls",
+            "response_code": 404
+        },
+        "2020-05-31": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/31-05-2020/dgr2-2020-05-31.xls",
+            "response_code": 404
+        },
+        "2024-03-08": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/08-03-2024/dgr2-2024-03-08.xls",
+            "response_code": 404
+        },
+        "2024-03-09": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/09-03-2024/dgr2-2024-03-09.xls",
+            "response_code": 404
+        }
+    },
+    "latest_downloaded_date": "2024-03-07"
+}
