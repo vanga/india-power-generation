@@ -1,5 +1,4 @@
 import pytz
-from tqdm import tqdm
 from datetime import datetime, timedelta
 from pathlib import Path
 import requests
@@ -138,7 +137,7 @@ def report_already_downloaded(file_name: str, date, format) -> bool:
 bootstrap()
 
 dates_to_download = get_dates_to_download()
-for date in tqdm(dates_to_download):
+for date in dates_to_download:
     date_str = date.strftime("%Y-%m-%d")
     base_url_path = date.strftime("%d-%m-%Y")
     format = get_file_format(date)
