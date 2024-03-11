@@ -1,0 +1,29 @@
+name: Realtime generation
+on:
+  workflow_dispatch: {}  
+  schedule:
+  # randomly chosen minute, every hour
+  - cron: '12 * * * *'
+
+jobs:
+  get-metadata:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Check out this repo
+      uses: actions/checkout@v3
+
+    - name: Fetch latest data
+      run: python3 realtime_generation.py
+      working-directory: ./src/meritindia
+      env:
+        PROXY_URL: ${{ secrets.PROXY_URL }}
+    - name: Commit and push if it changed
+      run: |-
+        git config user.name "Automated"
+        git config user.email "actions@users.noreply.github.com"
+        git add -A
+        timestamp=$(date -u)
+        git commit -m "Latest data: ${timestamp}" || exit 0
+        git push
