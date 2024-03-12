@@ -6,6 +6,7 @@ TODO:
 * Process PDF reports
 """
 
+import traceback
 import zipfile
 import itertools
 import tabula
@@ -18,9 +19,9 @@ import concurrent.futures
 pd.options.mode.chained_assignment = None
 
 
-src_dir = Path("./data/raw/")
+src_dir = Path("./data/npp/daily-generation/raw/")
 
-output_dir = Path("./data/csv/")
+output_dir = Path("./data/npp/daily-generation/csv/")
 data_exts = [".pdf", ".xls"]
 no_of_workers = 10
 row_type_col = "Row Type"
@@ -67,6 +68,10 @@ def get_final_columns():
     ]
 
 
+def date_from_report_name(report_path):
+    return report_path.stem.split("-", maxsplit=1)[1]
+
+
 def clean_df(df):
     for column in df.columns:
         if df[column].dtype == "object" or df[column].dtype == "string":
@@ -104,15 +109,32 @@ def drop_unnecessary_rows(df):
 
 
 def reports_to_parse():
-    formats = ["pdf", "xls"]
+    # reports that are not processed yet based on which years data is already part of region.csv
+    region_src = output_dir / "region.csv"
+    if region_src.exists():
+        df = pd.read_csv(region_src)
+        dates = df[date_col].unique()
+    else:
+        dates = []
+
     for file in src_dir.iterdir():
         if file.suffix == ".zip":
             # unzip file using python module, suggest code
             with zipfile.ZipFile(file, "r") as zip_ref:
-                zip_ref.extractall(src_dir)
-    for report in itertools.chain(src_dir.glob("**/*.xls"), src_dir.glob("**/*.pdf")):
-        if report.suffix in data_exts:
-            yield report
+                files_in_zip = zip_ref.namelist()
+                files_to_parse = []
+                for file_in_zip in files_in_zip:
+                    file_path = Path(file_in_zip)
+                    date = date_from_report_name(file_path)
+                    if file_path.suffix == ".xls" and date not in dates:
+                        # only process xls reports which are not already processed/ PDF parsing requires special handling
+                        files_to_parse.append(file_path)
+                if len(files_to_parse) > 0:
+                    zip_ref.extractall(
+                        src_dir, members=map(lambda x: str(x), files_to_parse)
+                    )
+                    for report in files_to_parse:
+                        yield report
 
 
 def convert_pdf_to_csv(report_path: Path, output_path: Path):
@@ -129,11 +151,13 @@ def convert_pdf_to_csv(report_path: Path, output_path: Path):
     for i, table in enumerate(tables):
         df = pd.concat([df, table], ignore_index=True)
     df.to_csv(output_path, index=False, quoting=csv.QUOTE_NONNUMERIC)
+    return output_path
 
 
 def convert_excel_to_csv(report_path: Path, output_path: Path):
     df = pd.read_excel(report_path)
     df.to_csv(output_path, index=False)
+    return output_path
 
 
 def convert_report_to_csv(report_path: Path):
@@ -144,12 +168,16 @@ def convert_report_to_csv(report_path: Path):
     format_dir = output_dir / src_report_format
     format_dir.mkdir(parents=True, exist_ok=True)
     output_path = format_dir / report_path.with_suffix(".csv").name
-    if output_path.exists():
-        return
-    if src_report_format == "pdf":
-        convert_pdf_to_csv(report_path, output_path)
-    elif src_report_format == "xls":
-        convert_excel_to_csv(report_path, output_path)
+    if output_path.exists() and output_path.stat().st_size > 0:
+        return output_path
+    try:
+        if src_report_format == "pdf":
+            return convert_pdf_to_csv(report_path, output_path)
+        elif src_report_format == "xls":
+            return convert_excel_to_csv(report_path, output_path)
+    except Exception as e:
+        print(f"Failed to convert {report_path} to csv")
+        print(e)
 
 
 # clean
@@ -194,12 +222,11 @@ def clean_report(df, format, date):
     return df
 
 
-def add_additional_columns(df):
+def add_additional_columns(daily_df):
     """
     Fill up the plant metadata from earlier rows
     Add date and format columns
     """
-    print(f"Processing {df.shape[0]} rows")
     o_power_st_col = 2
     o_sector_col = 5
     o_station_type_col = 4
@@ -210,14 +237,13 @@ def add_additional_columns(df):
     type = None
     station = None
 
-    df.insert(0, row_type_col, pd.NA)
-    df.insert(1, region_col, pd.NA)
-    df.insert(2, state_col, pd.NA)
-    df.insert(3, sector_col, pd.NA)
-    df.insert(4, station_type_col, pd.NA)
-    df.insert(5, station_col, pd.NA)
-    df.insert(6, unit_col, pd.NA)
-    faulty_dates = set()
+    daily_df.insert(0, row_type_col, pd.NA)
+    daily_df.insert(1, region_col, pd.NA)
+    daily_df.insert(2, state_col, pd.NA)
+    daily_df.insert(3, sector_col, pd.NA)
+    daily_df.insert(4, station_type_col, pd.NA)
+    daily_df.insert(5, station_col, pd.NA)
+    daily_df.insert(6, unit_col, pd.NA)
 
     def is_region_row(row):
         return row[o_power_st_col] == "REGION TOTAL"
@@ -239,93 +265,95 @@ def add_additional_columns(df):
     def is_unit_row(row):
         return pd.notnull(station) and row[o_power_st_col].startswith("Unit")
 
-    for idx, row in tqdm(df.iterrows()):
+    for idx, row in daily_df.iterrows():
         date = row[0]
-        if date in faulty_dates:
-            continue
         # if it is pd.NA add it to faulty_dates
         if pd.isnull(row[o_power_st_col]):
-            faulty_dates.add(date)
-            continue
+            return None
         if is_region_row(row):
             # set region to value from previous row
-            region = df.iloc[idx - 1][o_power_st_col]
-            df.at[idx, row_type_col] = "Region"
+            region = daily_df.iloc[idx - 1][o_power_st_col]
+            daily_df.at[idx, row_type_col] = "Region"
             state, sector, type, station = None, None, None, None
         elif is_state_row(row):
             # set state to value from previous row
-            state = df.iloc[idx - 1][o_power_st_col]
-            df.at[idx, row_type_col] = "State"
+            state = daily_df.iloc[idx - 1][o_power_st_col]
+            daily_df.at[idx, row_type_col] = "State"
             sector, type, station = None, None, None
         elif is_sector_row(row):
             sector = row[o_sector_col]
-            df.at[idx, row_type_col] = "Sector"
+            daily_df.at[idx, row_type_col] = "Sector"
             type, station = None, None
 
         elif is_type_row(row):
             type = row[o_station_type_col]
-            df.at[idx, row_type_col] = "Station Type"
+            daily_df.at[idx, row_type_col] = "Station Type"
             station = None
 
         elif is_station_row(row):
 
             station = row[o_power_st_col]
-            df.at[idx, row_type_col] = "Station"
+            daily_df.at[idx, row_type_col] = "Station"
 
         elif is_unit_row(row):
             # unit row
             unit = row[o_power_st_col] + " " + str(int(float(row[o_unit_no_col])))
-            df.at[idx, unit_col] = unit
-            df.at[idx, row_type_col] = "Unit"
+            daily_df.at[idx, unit_col] = unit
+            daily_df.at[idx, row_type_col] = "Unit"
         else:
             continue
 
-        df.at[idx, region_col] = region
-        df.at[idx, state_col] = state
-        df.at[idx, sector_col] = sector
-        df.at[idx, station_type_col] = type
-        df.at[idx, station_col] = station
+        daily_df.at[idx, region_col] = region
+        daily_df.at[idx, state_col] = state
+        daily_df.at[idx, sector_col] = sector
+        daily_df.at[idx, station_type_col] = type
+        daily_df.at[idx, station_col] = station
 
-    df.drop(
+    daily_df.drop(
         columns=[o_power_st_col, o_sector_col, o_station_type_col, o_unit_no_col],
         inplace=True,
     )
-    print(f"Faulty dates: {faulty_dates}")
-    return df
+
+    daily_df.columns = get_final_columns()
+    return daily_df
 
 
-def get_merged_df(format) -> pd.DataFrame:
+def get_clean_csv(csv_path, format, date) -> pd.DataFrame:
     """
     Add additional columns for format and date and return a combined df
     """
-    all_rows = []
-    failed_dates = []
-    for report in tqdm((output_dir / format).iterdir()):
-        if report.suffix != ".csv":
-            continue
-        date = report.stem.split("-", maxsplit=1)[1]
-        df = pd.read_csv(report, header=None)
-        df = clean_report(df, format, date)
-        if df is None:
-            failed_dates.append(date)
-            continue
-        df.insert(0, date_col, date)
-        df.insert(1, format_col, format)
-        all_rows.extend(df.values)
 
-    merged_df = pd.DataFrame(all_rows)
-    return merged_df, failed_dates
+    df = pd.read_csv(csv_path, header=None)
+    df = clean_report(df, format, date)
+    if df is None:
+        return
+    df.insert(0, date_col, date)
+    df.insert(1, format_col, format)
+    return df
+
+
+def get_trnsformed_df(raw_report) -> pd.DataFrame:
+    format = raw_report.suffix[1:]
+    date = date_from_report_name(raw_report)
+    temp_csv_path = convert_report_to_csv(raw_report)
+    if temp_csv_path is None:
+        return None
+    df = get_clean_csv(temp_csv_path, format, date)
+    if df is None:
+        return None
+    df.columns = range(len(df.columns))
+    return add_additional_columns(df)
+
+
+def add_rows_to_file(file_path, df):
+    if not file_path.exists():
+        df.to_csv(file_path, index=False)
+    else:
+        df.to_csv(file_path, mode="a", header=False, index=False)
 
 
 def write_to_csv(all_df: pd.DataFrame, output_dir: Path):
-    region_df = all_df[all_df[row_type_col] == "Region"]
-    state_df = all_df[all_df[row_type_col] == "State"]
-    sector_df = all_df[all_df[row_type_col] == "Sector"]
-    station_type_df = all_df[all_df[row_type_col] == "Station Type"]
-    station_df = all_df[all_df[row_type_col] == "Station"]
-    unit_df = all_df[all_df[row_type_col] == "Unit"]
-
-    region_df.drop(
+    region_df = all_df[all_df[row_type_col] == "Region"].drop(
         columns=[
             "Row Type",
             "State",
@@ -336,8 +364,8 @@ def write_to_csv(all_df: pd.DataFrame, output_dir: Path):
             "Source Format",
             "Outage Type",
         ]
-    ).to_csv(output_dir / "region.csv", index=False)
-    state_df.drop(
+    )
+    state_df = all_df[all_df[row_type_col] == "State"].drop(
         columns=[
             "Row Type",
             "Sector",
@@ -347,8 +375,8 @@ def write_to_csv(all_df: pd.DataFrame, output_dir: Path):
             "Source Format",
             "Outage Type",
         ]
-    ).to_csv(output_dir / "state.csv", index=False)
-    sector_df.drop(
+    )
+    sector_df = all_df[all_df[row_type_col] == "Sector"].drop(
         columns=[
             "Row Type",
             "Station Type",
@@ -357,30 +385,50 @@ def write_to_csv(all_df: pd.DataFrame, output_dir: Path):
             "Source Format",
             "Outage Type",
         ]
-    ).to_csv(output_dir / "sector.csv", index=False)
-    station_type_df.drop(
+    )
+    station_type_df = all_df[all_df[row_type_col] == "Station Type"].drop(
         columns=["Row Type", "Station", "Unit", "Source Format", "Outage Type"]
-    ).to_csv(output_dir / "station_type.csv", index=False)
-    station_df.drop(
+    )
+    station_df = all_df[all_df[row_type_col] == "Station"].drop(
         columns=["Row Type", "Unit", "Source Format", "Outage Type"]
-    ).to_csv(output_dir / "station.csv", index=False)
-    unit_df.drop(columns=["Row Type", "Source Format"]).to_csv(
-        output_dir / "unit.csv", index=False
+    )
+    unit_df = all_df[all_df[row_type_col] == "Unit"].drop(
+        columns=["Row Type", "Source Format"]
     )
 
+    add_rows_to_file(output_dir / "region.csv", region_df)
+    add_rows_to_file(output_dir / "state.csv", state_df)
+    add_rows_to_file(output_dir / "sector.csv", sector_df)
+    add_rows_to_file(output_dir / "station_type.csv", station_type_df)
+    add_rows_to_file(output_dir / "station.csv", station_df)
+    add_rows_to_file(output_dir / "unit.csv", unit_df)
 
-output_dir.mkdir(parents=True, exist_ok=True)
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-    reports = list(reports_to_parse())
-    res = executor.map(convert_report_to_csv, reports)
+def run():
+    # bulk process, useful when doing it for the first time. Else, download_reports already
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=40) as executor:
+        raw_reports = sorted(list(reports_to_parse()))
+        print(f"Found {len(raw_reports)} to convert")
+        results = list(tqdm(executor.map(get_trnsformed_df, raw_reports)))
+
+    executor.shutdown(wait=True)
+    failed_dates = []
+    dfs = []
+    for idx, response in enumerate(results):
+        if response is None:
+            failed_dates.append(raw_reports[idx].stem)
+        else:
+            dfs.append(response)
+
+    if len(failed_dates) > 0:
+        print(f"Failed to parse the following reports: {failed_dates}")
+
+    if len(dfs) > 0:
+        all_df = pd.concat(dfs, ignore_index=True)
+        write_to_csv(all_df, output_dir)
 
 
-executor.shutdown(wait=True)
-
-xls_df, failed_dates = get_merged_df("xls")
-xls_df.columns = range(len(xls_df.columns))
-all_df = add_additional_columns(xls_df)
-all_df.columns = get_final_columns()
-
-write_to_csv(all_df, output_dir)
+if __name__ == "__main__":
+    run()

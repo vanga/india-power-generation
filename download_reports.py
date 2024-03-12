@@ -4,11 +4,15 @@ from pathlib import Path
 import requests
 import json
 import zipfile
+from parse_reports import (
+    get_trnsformed_df,
+    write_to_csv,
+)
 
-
-output_dir = Path("./data/raw/")
-zip_dir = Path("./data/raw/")
-track_json_path = Path("./data/track.json")
+temp_output_dir = Path("./data/npp/daily-generation/raw/")
+processed_output_dir = Path("./data/npp/daily-generation/csv/")
+zip_dir = Path("./data/npp/daily-generation/raw/")
+track_json_path = Path("./data/npp/daily-generation/track.json")
 timezone = pytz.timezone("Asia/Kolkata")
 start_date = datetime(2017, 9, 1).replace(tzinfo=timezone)
 track_json = None
@@ -16,7 +20,7 @@ existing_reports = None
 
 
 def bootstrap():
-    output_dir.mkdir(parents=True, exist_ok=True)
+    temp_output_dir.mkdir(parents=True, exist_ok=True)
     global track_json
     global existing_reports
     if not track_json_path.exists():
@@ -29,9 +33,10 @@ def bootstrap():
     existing_reports = get_all_reports()
 
 
-def download_file(url, output_path):
+def download_file(url, output_path: Path):
     response = requests.get(url)
     response.raise_for_status()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "wb") as file:
         file.write(response.content)
 
@@ -136,24 +141,39 @@ def report_already_downloaded(file_name: str, date, format) -> bool:
 
 bootstrap()
 
-dates_to_download = get_dates_to_download()
-for date in dates_to_download:
+
+def get_report_url(date: datetime) -> str:
     date_str = date.strftime("%Y-%m-%d")
     base_url_path = date.strftime("%d-%m-%Y")
     format = get_file_format(date)
     file_name = f"dgr2-{date_str}.{format}"
-    url = f"https://npp.gov.in/public-reports/cea/daily/dgr/{base_url_path}/{file_name}"
-    dest_dir = output_dir / format
-    dest_dir.mkdir(parents=True, exist_ok=True)
-    output_path = dest_dir / file_name
+    return (
+        f"https://npp.gov.in/public-reports/cea/daily/dgr/{base_url_path}/{file_name}"
+    )
+
+
+def get_temp_output_path(date, format):
+    date_str = date.strftime("%Y-%m-%d")
+    file_name = f"dgr2-{date_str}.{format}"
+    dest_dir = temp_output_dir / format
+    return dest_dir / file_name
+
+
+dates_to_download = get_dates_to_download()
+for date in dates_to_download:
+    date_str = date.strftime("%Y-%m-%d")
+    format = get_file_format(date)
+    url = get_report_url(date)
+    file_name = Path(url).name
+    output_path = get_temp_output_path(date, format)
     if not report_already_downloaded(file_name, date, format):
         try:
             download_file(url, output_path)
             # create a zip file for each year and store the file in it
             zip_file_path = zip_dir / f"{date.year}.zip"
             add_files_to_zip(zip_file_path, [output_path], directory_in_zip=format)
-            output_path.unlink()
             print(f"Downloaded report for {date_str}")
+
             if date_str in track_json["failed"]:
                 track_json["failed"].pop(date_str)
             update_latest_downloaded_date(date)
@@ -164,7 +184,16 @@ for date in dates_to_download:
                 "url": url,
                 "response_code": e.response.status_code,
             }
+            update_latest_downloaded_date(date)
             flush_track_json()
+            continue
+
+        # transform the report
+        tr_df = get_trnsformed_df(output_path)
+        if tr_df is None:
+            continue
+        write_to_csv(tr_df, temp_output_dir)
+        output_path.unlink()
     else:
         update_latest_downloaded_date(date)
         flush_track_json()
