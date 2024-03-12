@@ -1,4 +1,4 @@
-name: Realtime generation
+name: Current generation
 on:
   workflow_dispatch: {}  
   schedule:
