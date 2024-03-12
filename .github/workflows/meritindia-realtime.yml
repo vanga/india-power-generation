@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Fetch latest data
-      run: python3 realtime_generation.py
+      run: python3 current_generation.py
       working-directory: ./src/meritindia
       env:
         PROXY_URL: ${{ secrets.PROXY_URL }}

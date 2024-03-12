@@ -59,7 +59,7 @@ def save_data(rows, dest_dir):
     print(f"Data written to {output_file}")
 
 
-def run():
+def get_data():
     state_codes = load_state_codes()
     rows = []
 
@@ -71,3 +71,4 @@ def run():
         for future in concurrent.futures.as_completed(futures):
             row = future.result()
             rows.append(row)
+    return rows
