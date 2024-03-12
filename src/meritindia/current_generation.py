@@ -2,7 +2,7 @@ import os
 import requests
 from pathlib import Path
 
-from meritindia import current_generation_helper as cgh
+import current_generation_helper as cgh
 
 output_dir = Path("../../data/meritindia/current-generation/raw")
 proxy_url = os.getenv("PROXY_URL")
