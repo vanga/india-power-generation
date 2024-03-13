@@ -187,12 +187,6 @@ for date in dates_to_download:
             update_latest_downloaded_date(date)
             flush_track_json()
             continue
-
-        # transform the report
-        tr_df = get_trnsformed_df(output_path)
-        if tr_df is None:
-            continue
-        write_to_csv(tr_df, temp_output_dir)
         output_path.unlink()
     else:
         update_latest_downloaded_date(date)

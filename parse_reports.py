@@ -134,7 +134,7 @@ def reports_to_parse():
                         src_dir, members=map(lambda x: str(x), files_to_parse)
                     )
                     for report in files_to_parse:
-                        yield report
+                        yield src_dir / report
 
 
 def convert_pdf_to_csv(report_path: Path, output_path: Path):
@@ -161,7 +161,6 @@ def convert_excel_to_csv(report_path: Path, output_path: Path):
 
 
 def convert_report_to_csv(report_path: Path):
-    output_path = output_dir / report_path.with_suffix(".csv").name
     ext = report_path.suffix
     assert ext in data_exts
     src_report_format = report_path.suffix[1:]
