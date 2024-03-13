@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 from pathlib import Path
 
@@ -8,8 +9,15 @@ output_dir = Path("../../data/meritindia/current-generation/raw")
 proxy_url = os.getenv("PROXY_URL")
 # using a proxy since the meritindia API is only accessible from India IPs
 
-state_failed = False
-req_body = {"type": "current_state_generation"}
+type = sys.argv[1]
+
+if type == "states":
+    req_body = {"type": "current_state_generation"}
+    saver = cgh.save_state_data
+elif type == "india":
+    req_body = {"type": "current_india_generation"}
+    saver = cgh.save_india_data
+
 res = requests.request(
     "POST",
     proxy_url,
@@ -19,24 +27,6 @@ res = requests.request(
 try:
     rows = res.json()["data"]
 except Exception as e:
-    print(f"Failed to fetch state data", e)
+    print(f"Failed to fetch {type} data", e)
     print(res.text)
-    state_failed = True
-cgh.save_state_data(rows, output_dir)
-
-india_res = requests.request(
-    "POST",
-    proxy_url,
-    json={"type": "current_india_generation"},
-    timeout=60,
-)
-try:
-    india_row = india_res.json()["data"]
-except Exception as e:
-    print(f"Failed to fetch India data", e)
-    print(india_res.text)
-    raise e
-cgh.save_india_data(india_row, output_dir)
-
-if state_failed:
-    raise Exception("Failed to fetch state data")
+saver(rows, output_dir)
