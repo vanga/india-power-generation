@@ -8,7 +8,7 @@ on:
 jobs:
   download-reports:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:
@@ -25,16 +25,6 @@ jobs:
         timestamp=$(date -u)
         git commit -m "Latest reports: ${timestamp}" || exit 0
         git push
-
-  parse-reports:
-    runs-on: ubuntu-latest
-    needs: download-reports
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-    - name: Check out this repo
-      uses: actions/checkout@v3
     - name: install dependencies
       run: pip install -r requirements.txt
 

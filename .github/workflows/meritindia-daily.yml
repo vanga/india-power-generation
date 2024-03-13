@@ -2,8 +2,8 @@ name: meritindia-daily-generation
 on:
   workflow_dispatch: {}  
   schedule:
-  # randomly chosen minute, every hour
-  - cron: '15 * * * *'
+  # IST 10PM +, random minute
+  - cron: '46 16 * * *'
 
 jobs:
   get-daily-generation:
