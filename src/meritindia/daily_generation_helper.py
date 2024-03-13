@@ -17,7 +17,7 @@ starting_date = datetime(2017, 6, 1, tzinfo=pytz.timezone(timezone)).date()
 tracking_path = "../../data/meritindia/track.json"
 state_codes_path = "./state_codes.json"
 output_dir = Path("../../data/meritindia/daily-generation/raw")
-max_workers = 5
+max_workers = 10
 
 
 def load_tracking_data():
@@ -99,7 +99,7 @@ def get_daily_state_generation(state_code, date: str):
     for item in data:
         row[item["TypeOfEnergy"]] = item["EnergyValue"]
 
-    return row
+    return row, res.elapsed.total_seconds()
 
 
 def get_request_inputs() -> Iterable[tuple[str, str]]:
@@ -128,15 +128,18 @@ def get_request_inputs() -> Iterable[tuple[str, str]]:
 
 def get_data(request_inputs: list[tuple[str, str]]):
     rows = []
+    total_latency = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = []
         for input in request_inputs:
             futures.append(executor.submit(get_daily_state_generation, *input))
 
         for future in concurrent.futures.as_completed(futures):
-            row = future.result()
+            row, latency = future.result()
+            total_latency += latency
             rows.append(row)
     # note that the order of the results is not guaranteed to be the same as the order of the inputs
+    print("Average latency:", total_latency / len(request_inputs))
     return rows
 
 
@@ -170,7 +173,7 @@ def run():
         save_data(rows, output_dir)
         update_tracking_metadata(rows)
 
-    batch_size = 500
+    batch_size = 100
     batch = []
     for input in request_inputs:
         batch.append(input)

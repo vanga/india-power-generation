@@ -1,4 +1,4 @@
-name: Current generation
+name: meritindia-current-generation
 on:
   workflow_dispatch: {}  
   schedule:
@@ -6,7 +6,7 @@ on:
   - cron: '12 * * * *'
 
 jobs:
-  get-metadata:
+  get-current-generation:
     runs-on: ubuntu-latest
     permissions:
       contents: write
