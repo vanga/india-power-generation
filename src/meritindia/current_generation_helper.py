@@ -5,7 +5,6 @@ from datetime import datetime
 import pytz
 import csv
 import concurrent.futures
-import lxml.html as LH
 
 requests.packages.urllib3.disable_warnings()
 # to disable the ssl verify warning
@@ -34,6 +33,9 @@ def request_current_data_india() -> str:
 
 
 def parse_india_data(data: str) -> dict:
+
+    import lxml.html as LH  # to trigger import only when needed (in lambda function)
+
     html_element = LH.fromstring(data)
     gen_values: dict[str] = html_element.xpath("//table")[1].xpath(
         ".//span[@class='counter']//text()"
