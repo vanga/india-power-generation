@@ -15,7 +15,8 @@ merit_ip = "45.249.235.16"
 url = f"https://{merit_ip}/StateWiseDetails/GetStateWiseDetailsForPiChart"
 plant_url = f"https://{merit_ip}/StateWiseDetails/GetPowerStationData"
 timezone = "Asia/Kolkata"
-starting_date = datetime(2017, 6, 1, tzinfo=pytz.timezone(timezone)).date()
+state_starting_date = datetime(2017, 6, 1, tzinfo=pytz.timezone(timezone)).date()
+plant_starting_date = datetime(2021, 6, 1, tzinfo=pytz.timezone(timezone)).date()
 tracking_base_path = Path("../../data/meritindia/track")
 state_codes_path = Path("./state_codes.json")
 output_dir = Path("../../data/meritindia/")
@@ -65,7 +66,7 @@ def get_rows_by_state(rows: list[dict]):
     return rows_by_state
 
 
-def save_data(data_type, rows: list[dict]):
+def save_data(data_type: str, rows: list[dict]):
     if data_type == "daily-state-generation":
         headers = [
             "StateCode",
@@ -149,9 +150,12 @@ def get_daily_plant_generation(state_code, date: str):
     return plant_rows, res.elapsed.total_seconds()
 
 
-def get_request_inputs(
-    data_type: str = "daily-state-generation",
-) -> Iterable[tuple[str, str]]:
+def get_request_inputs(data_type: str) -> Iterable[tuple[str, str]]:
+    starting_date = (
+        state_starting_date
+        if data_type == "daily-state-generation"
+        else plant_starting_date
+    )
     tracking_metadata = load_tracking_data(data_type)
     state_codes = load_state_codes()
     today = datetime.now(tz=pytz.timezone(timezone)).date()
