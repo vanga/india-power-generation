@@ -218,7 +218,7 @@ def get_new_tracking_metadata(rows, old_trm):
     return new_trm
 
 
-def update_tracking_metadata(data_type, rows):
+def update_tracking_metadata(data_type: str, rows: list[dict]):
     tracking_metadata = load_tracking_data(data_type)
     tracking_metadata = get_new_tracking_metadata(rows, tracking_metadata)
     save_tracking_data(data_type, tracking_metadata)

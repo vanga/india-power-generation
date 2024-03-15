@@ -17,6 +17,7 @@ assert data_type in [
 ], f"Unknown type: {data_type}"
 
 request_inputs = list(dgh.get_request_inputs(data_type))
+assert len(request_inputs) < 100, "Too many inputs"
 if request_inputs:
     req_body = {"type": data_type, "inputs": request_inputs}
     print(json.dumps(req_body))
@@ -28,6 +29,6 @@ if request_inputs:
         print(res.text)
         raise Exception("Failed to fetch data")
     dgh.save_data(data_type, rows)
-    dgh.save_tracking_data(data_type, rows)
+    dgh.update_tracking_metadata(data_type, rows)
 else:
     print("Nothing to get")
