@@ -10,19 +10,25 @@ from typing import Iterable
 requests.packages.urllib3.disable_warnings()
 # to disable the ssl verify warning
 
-domain = "meritindia.in"
-url = "https://45.249.235.16/StateWiseDetails/GetStateWiseDetailsForPiChart"
+merit_domain = "meritindia.in"
+merit_ip = "45.249.235.16"
+url = f"https://{merit_ip}/StateWiseDetails/GetStateWiseDetailsForPiChart"
+plant_url = f"https://{merit_ip}/StateWiseDetails/GetPowerStationData"
 timezone = "Asia/Kolkata"
 starting_date = datetime(2017, 6, 1, tzinfo=pytz.timezone(timezone)).date()
-tracking_path = "../../data/meritindia/track.json"
-state_codes_path = "./state_codes.json"
-output_dir = Path("../../data/meritindia/daily-generation/raw")
+tracking_base_path = Path("../../data/meritindia/track")
+state_codes_path = Path("./state_codes.json")
+output_dir = Path("../../data/meritindia/")
 max_workers = 10
+batch_size = 100  # how often to save the data to disk
 
 
-def load_tracking_data():
-    if not Path(tracking_path).exists():
-        return {}
+def get_track_path(data_type):
+    return tracking_base_path / f"{data_type}.json"
+
+
+def load_tracking_data(data_type):
+    tracking_path = get_track_path(data_type)
     with open(tracking_path, "r") as file:
         tracking_data = json.load(file)
     return tracking_data
@@ -34,13 +40,19 @@ def load_state_codes() -> dict[str, str]:
     return state_codes
 
 
-def save_tracking_data(tracking_data: dict):
+def save_tracking_data(data_type, tracking_data: dict):
+    tracking_path = get_track_path(data_type)
     with open(tracking_path, "w") as file:
         json.dump(tracking_data, file, indent=4)
 
 
-def get_output_path(state_code):
-    return Path(f"../../data/meritindia/daily-generation/raw/{state_code}.csv")
+def get_merit_format_date(date: str):
+    _date = datetime.strptime(date, "%Y-%m-%d").date()
+    return _date.strftime("%d %b %Y")
+
+
+def ist_now():
+    return datetime.now(pytz.timezone(timezone)).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def get_rows_by_state(rows: list[dict]):
@@ -53,17 +65,31 @@ def get_rows_by_state(rows: list[dict]):
     return rows_by_state
 
 
-def save_data(rows, dest_dir):
-    headers = [
-        "StateCode",
-        "DateTime",
-        "State Generation",
-        "Central ISGS",
-        "Other ISGS",
-        "Bilateral",
-        "Power Exchange",
-        "fetched_at",
-    ]
+def save_data(data_type, rows: list[dict]):
+    if data_type == "daily-state-generation":
+        headers = [
+            "StateCode",
+            "DateTime",
+            "State Generation",
+            "Central ISGS",
+            "Other ISGS",
+            "Bilateral",
+            "Power Exchange",
+            "fetched_at",
+        ]
+    elif data_type == "daily-plant-generation":
+        headers = [
+            "StateCode",
+            "DateTime",
+            "PowerStationName",
+            "NonSchedule",
+            "Schedule",
+            "ChartShowingScheduleValue",
+            "ChartShowingNonScheduleValue",
+            "TypeOfGeneration",
+            "fetched_at",
+        ]
+    dest_dir = output_dir / data_type / "raw"
     dest_dir.mkdir(parents=True, exist_ok=True)
     # group rows by state code
     rows_by_state = get_rows_by_state(rows)
@@ -79,31 +105,54 @@ def save_data(rows, dest_dir):
 
 
 def get_daily_state_generation(state_code, date: str):
-    _data = datetime.strptime(date, "%Y-%m-%d").date()
-    req_date_str = _data.strftime("%d %b %Y")
+    req_date_str = get_merit_format_date(date)
     res = requests.request(
         "POST",
         url,
         data={"StateCode": state_code, "date": req_date_str},
         verify=False,
-        headers={"Host": domain},
+        headers={"Host": merit_domain},
     )
     data = res.json()
     row = {
-        "fetched_at": datetime.now(tz=pytz.timezone(timezone)).strftime(
-            "%Y-%m-%d %H:%M:%S"
-        ),
+        "fetched_at": ist_now(),
         "StateCode": state_code,
         "DateTime": date,
     }
     for item in data:
         row[item["TypeOfEnergy"]] = item["EnergyValue"]
 
-    return row, res.elapsed.total_seconds()
+    return [row], res.elapsed.total_seconds()
 
 
-def get_request_inputs() -> Iterable[tuple[str, str]]:
-    tracking_metadata = load_tracking_data()
+def get_daily_plant_generation(state_code, date: str):
+    req_date_str = get_merit_format_date(date)
+    res = requests.request(
+        "POST",
+        plant_url,
+        data={"StateCode": state_code, "date": req_date_str},
+        verify=False,
+        headers={"Host": merit_domain},
+    )
+    data = res.json()
+    row = {
+        "fetched_at": ist_now(),
+        "StateCode": state_code,
+        "DateTime": date,
+    }
+    plant_rows = []
+    for item in data:
+        plant_row = row.copy()
+        plant_row.update(item)
+        plant_rows.append(plant_row)
+
+    return plant_rows, res.elapsed.total_seconds()
+
+
+def get_request_inputs(
+    data_type: str = "daily-state-generation",
+) -> Iterable[tuple[str, str]]:
+    tracking_metadata = load_tracking_data(data_type)
     state_codes = load_state_codes()
     today = datetime.now(tz=pytz.timezone(timezone)).date()
     end_date = today - timedelta(days=2)
@@ -126,21 +175,27 @@ def get_request_inputs() -> Iterable[tuple[str, str]]:
             yield state_code, str(date)
 
 
-def get_data(request_inputs: list[tuple[str, str]]):
-    rows = []
+def get_data(data_type, request_inputs: list[tuple[str, str]]):
+    if data_type == "daily-state-generation":
+        data_getter = get_daily_state_generation
+    elif data_type == "daily-plant-generation":
+        data_getter = get_daily_plant_generation
+    else:
+        raise ValueError(f"Unknown data type: {data_type}")
+    all_rows = []
     total_latency = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = []
         for input in request_inputs:
-            futures.append(executor.submit(get_daily_state_generation, *input))
+            futures.append(executor.submit(data_getter, *input))
 
         for future in concurrent.futures.as_completed(futures):
-            row, latency = future.result()
+            rows, latency = future.result()
             total_latency += latency
-            rows.append(row)
+            all_rows.extend(rows)
     # note that the order of the results is not guaranteed to be the same as the order of the inputs
     print("Average latency:", total_latency / len(request_inputs))
-    return rows
+    return all_rows
 
 
 def get_new_tracking_metadata(rows, old_trm):
@@ -159,21 +214,21 @@ def get_new_tracking_metadata(rows, old_trm):
     return new_trm
 
 
-def update_tracking_metadata(rows):
-    tracking_metadata = load_tracking_data()
+def update_tracking_metadata(data_type, rows):
+    tracking_metadata = load_tracking_data(data_type)
     tracking_metadata = get_new_tracking_metadata(rows, tracking_metadata)
-    save_tracking_data(tracking_metadata)
+    save_tracking_data(data_type, tracking_metadata)
 
 
 def run():
-    request_inputs = get_request_inputs()
+    data_type = "daily-state-generation"
 
     def process_batch(batch):
-        rows = get_data(batch)
-        save_data(rows, output_dir)
-        update_tracking_metadata(rows)
+        rows = get_data(data_type, batch)
+        save_data(data_type, rows)
+        update_tracking_metadata(data_type, rows)
 
-    batch_size = 100
+    request_inputs = get_request_inputs(data_type)
     batch = []
     for input in request_inputs:
         batch.append(input)
