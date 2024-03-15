@@ -19,7 +19,6 @@ jobs:
       working-directory: ./src/meritindia
       env:
         PROXY_URL: ${{ secrets.PROXY_URL }}
-      continue-on-error: true
     - name: Commit and push if it changed
       run: |-
         git config user.name "Automated"
