@@ -1,4 +1,5 @@
 import sys
+import json
 import os
 import requests
 from pathlib import Path
@@ -18,6 +19,7 @@ assert data_type in [
 request_inputs = list(dgh.get_request_inputs(data_type))
 if request_inputs:
     req_body = {"type": data_type, "inputs": request_inputs}
+    print(json.dumps(req_body))
     res = requests.request("POST", proxy_url, json=req_body, timeout=60)
     try:
         rows = res.json()["data"]
