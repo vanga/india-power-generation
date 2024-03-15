@@ -12,10 +12,10 @@ proxy_url = os.getenv("PROXY_URL")
 type = sys.argv[1]
 
 if type == "states":
-    req_body = {"type": "current_state_generation"}
+    req_body = {"type": "current-state-generation"}
     saver = cgh.save_state_data
 elif type == "india":
-    req_body = {"type": "current_india_generation"}
+    req_body = {"type": "current-india-generation"}
     saver = cgh.save_india_data
 
 res = requests.request(

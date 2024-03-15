@@ -4,14 +4,13 @@ from pathlib import Path
 
 import daily_generation_helper as dgh
 
-output_dir = Path("../../data/meritindia/daily-generation/raw")
 proxy_url = os.getenv("PROXY_URL")
 # using a proxy since the meritindia API is only accessible from India IPs
 
-
+data_type = "daily-state-generation"
 request_inputs = list(dgh.get_request_inputs())
 if request_inputs:
-    req_body = {"type": "daily_state_generation", "inputs": request_inputs[:2]}
+    req_body = {"type": data_type, "inputs": request_inputs}
     res = requests.request("POST", proxy_url, json=req_body, timeout=60)
     try:
         rows = res.json()["data"]
@@ -19,7 +18,7 @@ if request_inputs:
         print(f"Failed to fetch data for {req_body}")
         print(res.text)
         raise Exception("Failed to fetch data")
-    dgh.save_data(rows, output_dir)
-    dgh.save_tracking_data(rows)
+    dgh.save_data(data_type, rows)
+    dgh.save_tracking_data(data_type, rows)
 else:
     print("Nothing to get")

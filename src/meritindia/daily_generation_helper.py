@@ -40,7 +40,7 @@ def load_state_codes() -> dict[str, str]:
     return state_codes
 
 
-def save_tracking_data(data_type, tracking_data: dict):
+def save_tracking_data(data_type: str, tracking_data: dict):
     tracking_path = get_track_path(data_type)
     with open(tracking_path, "w") as file:
         json.dump(tracking_data, file, indent=4)
