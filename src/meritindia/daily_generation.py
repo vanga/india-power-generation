@@ -21,7 +21,7 @@ assert len(request_inputs) < 500, "Too many inputs"
 if request_inputs:
     req_body = {"type": data_type, "inputs": request_inputs}
     print(json.dumps(req_body))
-    res = requests.request("POST", proxy_url, json=req_body, timeout=60)
+    res = requests.request("POST", proxy_url, json=req_body, timeout=120)
     try:
         rows = res.json()["data"]
     except Exception:

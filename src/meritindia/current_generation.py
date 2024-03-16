@@ -22,7 +22,7 @@ res = requests.request(
     "POST",
     proxy_url,
     json=req_body,
-    timeout=60,
+    timeout=120,
 )
 try:
     rows = res.json()["data"]
