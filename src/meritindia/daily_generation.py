@@ -17,7 +17,7 @@ assert data_type in [
 ], f"Unknown type: {data_type}"
 
 request_inputs = list(dgh.get_request_inputs(data_type))
-assert len(request_inputs) < 100, "Too many inputs"
+assert len(request_inputs) < 500, "Too many inputs"
 if request_inputs:
     req_body = {"type": data_type, "inputs": request_inputs}
     print(json.dumps(req_body))
