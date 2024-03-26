@@ -300,14 +300,10 @@
             "url": "https://npp.gov.in/public-reports/cea/daily/dgr/31-05-2020/dgr2-2020-05-31.xls",
             "response_code": 404
         },
-        "2024-03-22": {
-            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/22-03-2024/dgr2-2024-03-22.xls",
-            "response_code": 404
-        },
-        "2024-03-23": {
-            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/23-03-2024/dgr2-2024-03-23.xls",
+        "2024-03-24": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/24-03-2024/dgr2-2024-03-24.xls",
             "response_code": 404
         }
     },
-    "latest_downloaded_date": "2024-03-23"
+    "latest_downloaded_date": "2024-03-24"
 }
