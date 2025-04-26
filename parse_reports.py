@@ -215,8 +215,9 @@ def clean_report(df, format, date):
         df.update(unit_rows)
         # drop last column
         df.drop(df.columns[-1], axis=1, inplace=True)
-    if df.shape[1] != expected_columns:
-        print(f"Extra columns found in {date}")
+    if (df.shape[1] != expected_columns) and df.shape[1] != (expected_columns - 1):
+        # in some files in later years type and sector are in the same column
+        print(f"Extra columns found in {date}", df.columns, expected_columns)
         return
     return df
 
@@ -227,7 +228,7 @@ def add_additional_columns(daily_df):
     Add date and format columns
     """
     o_power_st_col = 2
-    o_sector_col = 5
+    o_sector_col = 5 if daily_df.shape[1] == 17 else 4
     o_station_type_col = 4
     o_unit_no_col = 3
     region = None
