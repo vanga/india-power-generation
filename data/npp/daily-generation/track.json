@@ -303,7 +303,11 @@
         "2025-09-04": {
             "url": "https://npp.gov.in/public-reports/cea/daily/dgr/04-09-2025/dgr2-2025-09-04.xls",
             "response_code": 404
+        },
+        "2025-09-05": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/05-09-2025/dgr2-2025-09-05.xls",
+            "response_code": 404
         }
     },
-    "latest_downloaded_date": "2025-09-04"
+    "latest_downloaded_date": "2025-09-05"
 }
