@@ -299,7 +299,11 @@
         "2020-05-31": {
             "url": "https://npp.gov.in/public-reports/cea/daily/dgr/31-05-2020/dgr2-2020-05-31.xls",
             "response_code": 404
+        },
+        "2025-09-26": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/26-09-2025/dgr2-2025-09-26.xls",
+            "response_code": 404
         }
     },
-    "latest_downloaded_date": "2025-09-25"
+    "latest_downloaded_date": "2025-09-26"
 }
