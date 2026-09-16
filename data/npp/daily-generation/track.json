@@ -302,8 +302,12 @@
         },
         "2026-09-14": {
             "url": "https://npp.gov.in/public-reports/cea/daily/dgr/14-09-2026/dgr2-2026-09-14.xls",
-            "response_code": 404
+            "response_code": 403
+        },
+        "2026-09-15": {
+            "url": "https://npp.gov.in/public-reports/cea/daily/dgr/15-09-2026/dgr2-2026-09-15.xls",
+            "response_code": 403
         }
     },
-    "latest_downloaded_date": "2026-09-14"
+    "latest_downloaded_date": "2026-09-15"
 }
